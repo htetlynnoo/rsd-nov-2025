@@ -10,6 +10,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
+const cors = require("cors");
+app.use(cors());
+
 app.get("/posts", async (req, res) => {
     const posts = await prisma.post.findMany({
         include: { user: true },
@@ -17,7 +20,9 @@ app.get("/posts", async (req, res) => {
         orderBy: { id: "desc" },
     });
 
-    res.json(posts);
+    setTimeout(() => {
+        res.json(posts);
+    }, 2000);
 });
 
 app.get("/posts/:id", async (req, res) => {

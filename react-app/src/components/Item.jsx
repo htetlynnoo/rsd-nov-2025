@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { blue } from "@mui/material/colors"; 
+import { blue } from "@mui/material/colors";
 
 export default function Item({ post, remove }) {
     return (
@@ -30,7 +30,7 @@ export default function Item({ post, remove }) {
                             }}
                         ></Avatar>
                         <Typography sx={{ fontWeight: "bold" }}>
-                            {post.user}
+                            {post.user.name}
                         </Typography>
                     </Box>
 
