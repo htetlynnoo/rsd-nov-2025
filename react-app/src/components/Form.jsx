@@ -3,9 +3,34 @@ import { useRef } from "react";
 import { OutlinedInput, IconButton } from "@mui/material";
 
 import { Add as AddIcon } from "@mui/icons-material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export default function Form({ add }) {
+async function postPost({ content }) {
+    const api = "http://localhost:8080/posts";
+    const res = await fetch(api, {
+        method: "POST",
+        body: JSON.stringify({ content }),
+        headers: {
+            "Content-type": "application/json",
+        },
+    });
+
+    return res.json();
+}
+
+export default function Form() {
     const inputRef = useRef();
+    const queryClient = useQueryClient();
+
+    const add = useMutation({
+        mutationFn: postPost,
+        onSuccess: async item => {
+            await queryClient.cancelQueries();
+            await queryClient.setQueryData(["posts"], old => {
+                return [item, ...old];
+            });
+        },
+    });
 
     return (
         <form
@@ -14,7 +39,7 @@ export default function Form({ add }) {
                 e.preventDefault();
 
                 const content = inputRef.current.value;
-                content && add(content);
+                content && add.mutate({ content });
 
                 e.currentTarget.reset();
             }}

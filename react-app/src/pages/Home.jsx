@@ -1,11 +1,8 @@
-import {
-    useQuery,
-    useMutation,
-    useQueryClient,
-    QueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Item from "../components/Item";
 import { Typography } from "@mui/material";
+import { useApp } from "../AppProvider";
+import Form from "../components/Form";
 
 const api = "http://localhost:8080/posts";
 async function fetchPosts() {
@@ -27,6 +24,7 @@ export default function Home() {
         queryFn: fetchPosts,
     });
     const queryClient = useQueryClient();
+    const { showForm } = useApp();
 
     const remove = useMutation({
         mutationFn: deletePost,
@@ -49,6 +47,7 @@ export default function Home() {
 
     return (
         <>
+            {showForm && <Form />}
             {data.map(post => {
                 return (
                     <Item key={post.id} post={post} remove={remove.mutate} />
