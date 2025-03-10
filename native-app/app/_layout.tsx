@@ -4,10 +4,13 @@ export default function RootLayout() {
     return (
         <Stack>
             <Stack.Screen
-                name="index"
+                name="(home)"
                 options={{ title: "Home", headerShown: false }}
             />
-            <Stack.Screen name="profile" options={{ title: "Profile" }} />
+            <Stack.Screen
+                name="add"
+                options={{ title: "Add Post", presentation: "modal" }}
+            />
         </Stack>
     );
 }
