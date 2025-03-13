@@ -45,7 +45,7 @@ type Post = {
 
 type Category = {
     name: String;
-};
+};   
 
 let post: Res<Post> = {
     data: { title: "Post Title" },
