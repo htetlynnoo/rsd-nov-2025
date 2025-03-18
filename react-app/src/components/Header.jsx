@@ -12,7 +12,8 @@ import { useApp } from "../AppProvider";
 import { useLocation, useNavigate } from "react-router";
 
 export default function Header() {
-    const { showForm, setShowForm, mode, setMode, setShowDrawer } = useApp();
+    const { auth, showForm, setShowForm, mode, setMode, setShowDrawer } =
+        useApp();
     const { pathname } = useLocation();
     const navigate = useNavigate();
     return (
@@ -42,15 +43,17 @@ export default function Header() {
                     <Typography>App</Typography>
                 </Box>
                 <Box sx={{ display: "flex", gap: 1 }}>
-                    <IconButton
-                        edge="end"
-                        color="inherit"
-                        onClick={() => {
-                            setShowForm(!showForm);
-                        }}
-                    >
-                        <AddIcon />
-                    </IconButton>
+                    {auth && (
+                        <IconButton
+                            edge="end"
+                            color="inherit"
+                            onClick={() => {
+                                setShowForm(!showForm);
+                            }}
+                        >
+                            <AddIcon />
+                        </IconButton>
+                    )}
 
                     {mode == "dark" ? (
                         <IconButton

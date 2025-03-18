@@ -7,11 +7,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 async function postPost({ content }) {
     const api = "http://localhost:8080/posts";
+    const token = localStorage.getItem("token");
     const res = await fetch(api, {
         method: "POST",
         body: JSON.stringify({ content }),
         headers: {
-            "Content-type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
     });
 

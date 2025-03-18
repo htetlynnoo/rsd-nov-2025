@@ -7,6 +7,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Avatar,
 } from "@mui/material";
 
 import {
@@ -19,6 +20,7 @@ import {
 
 import { useApp } from "../AppProvider";
 import { useNavigate } from "react-router";
+import { green } from "@mui/material/colors";
 
 export default function AppDrawer() {
     const { showDrawer, setShowDrawer, auth, setAuth } = useApp();
@@ -34,7 +36,28 @@ export default function AppDrawer() {
             role="presentation"
             onClick={toggleDrawer(false)}
         >
-            <Box sx={{ height: 200 }}></Box>
+            <Box
+                sx={{
+                    height: 200,
+                    padding: 2,
+                    display: "flex",
+                    alignItems: "flex-end",
+                }}
+            >
+                {auth && (
+                    <>
+                        <Avatar
+                            sx={{
+                                height: 128,
+                                width: 128,
+                                background: green[500],
+                            }}
+                        >
+                            {auth.name[0]}
+                        </Avatar>
+                    </>
+                )}
+            </Box>
             <Divider />
             <List>
                 <ListItem disablePadding>
@@ -59,7 +82,12 @@ export default function AppDrawer() {
                     </ListItem>
 
                     <ListItem disablePadding>
-                        <ListItemButton onClick={() => setAuth(false)}>
+                        <ListItemButton
+                            onClick={() => {
+                                setAuth(null);
+                                localStorage.removeItem("token");
+                            }}
+                        >
                             <ListItemIcon>
                                 <LogoutIcon />
                             </ListItemIcon>
