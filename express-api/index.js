@@ -1,13 +1,7 @@
 const express = require("express");
 const app = express();
 
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-
 const { usersRouter } = require("./routers/users");
-app.use(usersRouter);
-
-const { auth, isOwner } = require("./middlewares/auth");
 
 const bodyParser = require("body-parser");
 
@@ -17,54 +11,60 @@ app.use(bodyParser.json());
 
 const cors = require("cors");
 app.use(cors());
+const { postsRouter } = require("./routers/posts");
+const { commentsRouter } = require("./routers/comments");
 
-app.get("/posts", async (req, res) => {
-    const posts = await prisma.post.findMany({
-        include: { user: true },
-        take: 20,
-        orderBy: { id: "desc" },
-    });
-
-    setTimeout(() => {
-        res.json(posts);
-    }, 2000);
-});
-
-app.get("/posts/:id", async (req, res) => {
-    const { id } = req.params;
-    const post = await prisma.post.findUnique({
-        include: { user: true },
-        where: { id: Number(id) },
-    });
-    res.json(post);
-});
-
-app.post("/posts", auth, async (req, res) => {
-    const { content } = req.body;
-    const user = res.locals.user;
-    if (!content) {
-        return res.status(400).json({ msg: "content is required" });
-    }
-
-    const post = await prisma.post.create({
-        data: {
-            content,
-            userId: Number(user.id), // Ensure userId exists in the database
-        },
-        include: { user: true },
-    });
-
-    res.status(201).json(post);
-});
-
-app.delete("/posts/:id", auth, isOwner("post"), async (req, res) => {
-    const { id } = req.params;
-    const post = await prisma.post.delete({
-        where: { id: Number(id) },
-    });
-    res.json(post);
-});
+app.use(usersRouter);
+app.use(postsRouter);
+app.use(commentsRouter);
 
 app.listen(8080, () => {
     console.log("Express is running at 8080");
 });
+
+// app.post("/posts/:id/like", auth, async (req, res) => {
+//     const { id } = req.params;
+//     const user = res.locals.user; // dr ka auth htl ka nay lr tr
+
+//     try {
+//         const like = await prisma.like.create({
+//             data: {
+//                 postId: Number(id),
+//                 userId: user.id,
+//             },
+//         });
+
+//         const post = await prisma.post.findUnique({
+//             where: { id: Number(id) },
+//             include: { user: true, likes: true },
+//         });
+//         res.json(post);
+//     } catch (err) {
+//         if (err.code === "P002") {
+//             return res.status(400).json({ msg: "Already Liked" });
+//         }
+//         res.status(500).json({ msg: err.message });
+//     }
+// });
+
+// app.delete("/posts/:id/like", auth, async (req, res) => {
+//     const { id } = req.params;
+//     const user = res.locals.user; // dr ka auth htl ka nay lr tr
+
+//     try {
+//         await prisma.like.deleteMany({
+//             where: {
+//                 postId: Number(id),
+//                 userId: user.id,
+//             },
+//         });
+
+//         const post = await prisma.post.findUnique({
+//             where: { id: Number(id) },
+//             include: { user: true, likes: true },
+//         });
+//         res.json(post);
+//     } catch (err) {
+//         res.status(500).json({ msg: err.message });
+//     }
+// });

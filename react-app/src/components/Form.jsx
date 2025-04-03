@@ -27,7 +27,7 @@ export default function Form() {
     const add = useMutation({
         mutationFn: postPost,
         onSuccess: async item => {
-            await queryClient.cancelQueries();
+            await queryClient.invalidateQueries("posts");
             await queryClient.setQueryData(["posts"], old => {
                 return [item, ...old];
             });

@@ -1,62 +1,36 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Item from "../components/Item";
-import { Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Tabs, Tab } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router";
 import { useApp } from "../AppProvider";
+import Posts from "../components/Posts";
 import Form from "../components/Form";
 
-const api = "http://localhost:8080/posts";
-async function fetchPosts() {
-    const res = await fetch(api);
-
-    return res.json();
-}
-
-async function deletePost(id) {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`${api}/${id}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    if (!res.ok) throw new Error("Failed to delete post");
-}
-
 export default function Home() {
-    const { data, error, isLoading } = useQuery({
-        queryKey: ["posts"],
-        queryFn: fetchPosts,
-    });
-    const queryClient = useQueryClient();
     const { auth, showForm } = useApp();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tab = searchParams.get("tab") || "latest";
 
-    const remove = useMutation({
-        mutationFn: deletePost,
-        onMutate: id => {
-            queryClient.setQueryData(["posts"], old => {
-                return old.filter(post => {
-                    return post.id != id;
-                });
-            });
-        },
-    });
-
-    if (error) {
-        return <Typography>{error.message}</Typography>;
-    }
-
-    if (isLoading) {
-        return <Typography>Loading .....</Typography>;
-    }
+    const handleTabChange = (event, newValue) => {
+        setSearchParams({ tab: newValue });
+    };
 
     return (
         <>
+            <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+                <Tabs
+                    value={tab}
+                    onChange={handleTabChange}
+                    variant="fullWidth"
+                >
+                    <Tab label="Latest" value="latest" />
+                    <Tab label="Following" value="following" disabled={!auth} />
+                </Tabs>
+            </Box>
+
             {auth && showForm && <Form />}
-            {data.map(post => {
-                return (
-                    <Item key={post.id} post={post} remove={remove.mutate} />
-                );
-            })}
+            <Posts type={tab} />
         </>
     );
 }

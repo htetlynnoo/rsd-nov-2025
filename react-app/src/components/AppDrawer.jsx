@@ -8,6 +8,7 @@ import {
     ListItemIcon,
     ListItemText,
     Avatar,
+    Typography,
 } from "@mui/material";
 
 import {
@@ -41,20 +42,51 @@ export default function AppDrawer() {
                     height: 200,
                     padding: 2,
                     display: "flex",
-                    alignItems: "flex-end",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    gap: 2,
                 }}
             >
-                {auth && (
+                {auth && auth.name && (
                     <>
-                        <Avatar
+                        <Box
                             sx={{
-                                height: 128,
-                                width: 128,
-                                background: green[500],
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 2,
                             }}
                         >
-                            {auth.name[0]}
-                        </Avatar>
+                            <Avatar
+                                sx={{
+                                    width: 64,
+                                    height: 64,
+                                    background: green[500],
+                                }}
+                            >
+                                {auth.name[0] || "?"}
+                            </Avatar>
+                            <Box>
+                                <Typography variant="h6">
+                                    {auth.name}
+                                </Typography>
+                                <Box sx={{ display: "flex", gap: 2 }}>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ fontSize: 12 }}
+                                    >
+                                        {auth.followersCount || 0} followers
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ fontSize: 12 }}
+                                    >
+                                        {auth.followingCount || 0} following
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Box>
                     </>
                 )}
             </Box>
@@ -73,7 +105,9 @@ export default function AppDrawer() {
             {auth && (
                 <List>
                     <ListItem disablePadding>
-                        <ListItemButton onClick={() => navigate("/Profile")}>
+                        <ListItemButton
+                            onClick={() => navigate(`/users/${auth.id}`)}
+                        >
                             <ListItemIcon>
                                 <ProfileIcon />
                             </ListItemIcon>
