@@ -22,7 +22,7 @@ model User {
   follows  Follow[] @relation("follower")//example 1.4k follows 
   followers Follow[] @relation("following")
   notifications        Notification[]  @relation("notificationReceiver")
-     notificationsActed   Notification[] @relation("notificationActor")
+  notificationsActed   Notification[] @relation("notificationActor")
   created DateTime @default(now())
 }
 
